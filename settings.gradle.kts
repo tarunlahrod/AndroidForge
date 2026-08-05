@@ -22,5 +22,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Android(Forge"
+rootProject.name = "AndroidForge"
 include(":app")
