@@ -8,7 +8,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AndroidForge">
         <activity
-            android:name=".feature.counter.CounterActivity"
+            android:name=".feature.login.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
