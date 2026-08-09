@@ -1,4 +1,4 @@
-package com.tarunlahrod.androidforge.core.di
+package com.tarunlahrod.androidforge.di
 
 /**
  * Global access point to the single `AppContainer`.

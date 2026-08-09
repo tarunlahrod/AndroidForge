@@ -10,7 +10,7 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.tarunlahrod.androidforge.core.di.ServiceLocator
+import com.tarunlahrod.androidforge.di.ServiceLocator
 import com.tarunlahrod.androidforge.databinding.ActivityLoginBinding
 import com.tarunlahrod.androidforge.feature.counter.CounterActivity
 import kotlinx.coroutines.launch
