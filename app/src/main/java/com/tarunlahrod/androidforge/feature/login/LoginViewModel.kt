@@ -2,6 +2,7 @@ package com.tarunlahrod.androidforge.feature.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tarunlahrod.androidforge.network.ApiResult
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -44,21 +45,24 @@ class LoginViewModel(
                 it.copy(isLoading = true)
             }
 
-            val success = repository.login(
+            val result = repository.login(
                 email = uiState.value.email,
                 password = uiState.value.password
             )
 
-            if (success) {
-                _uiEvent.emit(LoginUiEvent.NavigateToHome)
-            } else {
-                _uiEvent.emit(
-                    LoginUiEvent.ShowToast("Invalid credentials")
-                )
-            }
-
             _uiState.update {
                 it.copy(isLoading = false)
+            }
+
+            when (result) {
+                is ApiResult.Success -> {
+                    _uiEvent.emit(LoginUiEvent.NavigateToHome)
+                }
+                is ApiResult.Failure -> {
+                    _uiEvent.emit(
+                        LoginUiEvent.ShowToast(result.error.message ?: "Login failed")
+                    )
+                }
             }
         }
     }

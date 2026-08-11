@@ -1,5 +1,6 @@
 package com.tarunlahrod.androidforge.di
 
+import com.google.gson.Gson
 import com.tarunlahrod.androidforge.feature.login.FakeAuthRepository
 
 /**
@@ -9,4 +10,5 @@ class AppContainer {
 
     val authRepository by lazy { FakeAuthRepository() }
 
+    val gson: Gson by lazy { Gson() }
 }
