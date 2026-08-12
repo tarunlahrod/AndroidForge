@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
 class LoginViewModelFactory(
-    private val repository: FakeAuthRepository
+    private val repository: AuthRepository
 ) : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")

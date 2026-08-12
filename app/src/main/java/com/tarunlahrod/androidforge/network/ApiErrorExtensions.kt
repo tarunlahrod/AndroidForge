@@ -7,15 +7,20 @@ import retrofit2.HttpException
 fun Throwable.toApiError(): ApiError {
     return when (this) {
         is HttpException -> {
-            val serverError = response()
-                ?.errorBody()
-                ?.string()
-                ?.let {
-                    Gson().fromJson(
-                        it,
-                        ServerErrorResponse::class.java
-                    )
-                }
+            val serverError = try {
+                response()
+                    ?.errorBody()
+                    ?.string()
+                    ?.let {
+                        Gson().fromJson(
+                            it,
+                            ServerErrorResponse::class.java
+                        )
+                    }
+            } catch (e: Exception) {
+                null
+            }
+
             ApiError(
                 type = when (code()) {
                     in 400..499 -> ApiErrorType.Client
