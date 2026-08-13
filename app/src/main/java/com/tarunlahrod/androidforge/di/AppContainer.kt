@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.tarunlahrod.androidforge.feature.login.AuthApi
 import com.tarunlahrod.androidforge.feature.login.AuthRepository
 import com.tarunlahrod.androidforge.feature.login.FakeAuthRepository
+import com.tarunlahrod.androidforge.network.InMemoryTokenProvider
 import com.tarunlahrod.androidforge.network.NetworkClient
 
 /**
@@ -15,10 +16,15 @@ class AppContainer {
 
     val gson: Gson by lazy { Gson() }
 
+    val tokenProvider: InMemoryTokenProvider by lazy {
+        InMemoryTokenProvider()
+    }
+
     val networkClient: NetworkClient by lazy {
         NetworkClient(
             gson = gson,
-            baseUrl = "https://example.com/"
+            baseUrl = "https://example.com/",
+            tokenProvider = tokenProvider
         )
     }
 
@@ -27,6 +33,9 @@ class AppContainer {
     }
 
     val authRepository: AuthRepository by lazy {
-        AuthRepository(authApi)
+        AuthRepository(
+            api = authApi,
+            tokenProvider = tokenProvider
+        )
     }
 }

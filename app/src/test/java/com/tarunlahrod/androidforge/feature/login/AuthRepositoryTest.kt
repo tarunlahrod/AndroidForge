@@ -3,6 +3,7 @@ package com.tarunlahrod.androidforge.feature.login
 import com.google.gson.Gson
 import com.tarunlahrod.androidforge.network.ApiErrorType
 import com.tarunlahrod.androidforge.network.ApiResult
+import com.tarunlahrod.androidforge.network.InMemoryTokenProvider
 import com.tarunlahrod.androidforge.network.NetworkClient
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -16,19 +17,27 @@ import kotlinx.coroutines.test.runTest
 class AuthRepositoryTest {
     private lateinit var mockWebServer: MockWebServer
     private lateinit var repository: AuthRepository
+    private lateinit var tokenProvider: InMemoryTokenProvider
+    private lateinit var authApi: AuthApi
 
     @Before
     fun setup() {
         mockWebServer = MockWebServer()
         mockWebServer.start()
+        tokenProvider = InMemoryTokenProvider()
 
         val networkClient = NetworkClient(
             gson = Gson(),
-            baseUrl = mockWebServer.url("/").toString()
+            baseUrl = mockWebServer.url("/").toString(),
+            tokenProvider = tokenProvider
         )
 
-        val authApi = networkClient.createApi(AuthApi::class.java)
-        repository = AuthRepository(authApi)
+        authApi = networkClient.createApi(AuthApi::class.java)
+
+        repository = AuthRepository(
+            api = authApi,
+            tokenProvider = tokenProvider
+        )
     }
 
     @After
@@ -45,7 +54,8 @@ class AuthRepositoryTest {
                 .setBody(
                     """
                         {
-                            "success": true
+                            "success": true,
+                            "accessToken": "abc123"
                         }
                     """.trimIndent()
                 )
@@ -161,5 +171,166 @@ class AuthRepositoryTest {
 
         // Assert
         assertTrue(result is ApiResult.Failure)
+    }
+
+    @Test
+    fun `login server gets correct header in api`() = runTest {
+        // Arrange
+        mockWebServer.enqueue(
+            MockResponse()
+                .setResponseCode(200)
+                .setBody(
+                    """
+                        {
+                            "success": true,
+                            "accessToken": "abc123"
+                        }
+                    """.trimIndent()
+                )
+        )
+
+        // Act
+        val result = repository.login(
+            email = "admin@test.com",
+            password = "1234"
+        )
+
+        // Assert
+        assertTrue(result is ApiResult.Success)
+        val request = mockWebServer.takeRequest()
+        assertEquals("AndroidForge", request.getHeader("X-Client"))
+    }
+
+    @Test
+    fun `auth interceptor adds authorization header when token exists`() = runTest {
+        // Arrange
+        tokenProvider.saveAccessToken("abc123")
+
+        mockWebServer.enqueue(
+            MockResponse()
+                .setResponseCode(200)
+                .setBody(
+                    """
+                        {
+                            "success": true
+                        }
+                    """.trimIndent()
+                )
+        )
+
+        // Act
+        repository.login(
+            email = "admin@test.com",
+            password = "1234"
+        )
+
+        // Assert
+        val request = mockWebServer.takeRequest()
+
+        assertEquals(
+            "Bearer abc123",
+            request.getHeader("Authorization")
+        )
+    }
+
+    @Test
+    fun `auth interceptor does not add authorization header when token does not exist`() = runTest {
+        // Arrange
+        mockWebServer.enqueue(
+            MockResponse()
+                .setResponseCode(200)
+                .setBody(
+                    """
+                        {
+                            "success": true
+                        }
+                    """.trimIndent()
+                )
+        )
+
+        // Act
+        repository.login(
+            email = "admin@test.com",
+            password = "1234"
+        )
+
+        // Assert
+        val request = mockWebServer.takeRequest()
+
+        assertEquals(
+            null,
+            request.getHeader("Authorization")
+        )
+    }
+
+    @Test
+    fun `login saves access token when server responds with 200`() = runTest {
+        // Arrange
+        mockWebServer.enqueue(
+            MockResponse()
+                .setResponseCode(200)
+                .setBody(
+                    """
+                        {
+                            "success": true,
+                            "accessToken": "abc123"
+                        }
+                    """.trimIndent()
+                )
+        )
+
+        // Act
+        val result = repository.login(
+            email = "admin@test.com",
+            password = "1234"
+        )
+
+        // Assert
+        assertTrue(result is ApiResult.Success)
+        assertEquals("abc123", tokenProvider.getAccessToken())
+    }
+
+    @Test
+    fun `login saves token and adds it to subsequent authenticated request`() = runTest {
+        // Arrange
+        mockWebServer.enqueue(
+            MockResponse()
+                .setResponseCode(200)
+                .setBody(
+                    """
+                        {
+                            "success": true,
+                            "accessToken": "abc123"
+                        }
+                    """.trimIndent()
+                )
+        )
+
+        mockWebServer.enqueue(
+            MockResponse()
+                .setResponseCode(200)
+        )
+
+        // Act
+        // login api call
+        val result = repository.login(
+            email = "admin@test.com",
+            password = "1234"
+        )
+
+        // get profile api call
+        authApi.getProfile()
+
+        // Assert
+        assertTrue(result is ApiResult.Success)
+
+        mockWebServer.takeRequest() // login request
+        val profileRequest = mockWebServer.takeRequest()
+
+        assertEquals("GET", profileRequest.method)
+        assertEquals(
+            "Bearer abc123",
+            "Bearer ${tokenProvider.getAccessToken()}"
+        )
     }
 }

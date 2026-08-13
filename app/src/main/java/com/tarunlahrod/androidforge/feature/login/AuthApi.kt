@@ -1,6 +1,7 @@
 package com.tarunlahrod.androidforge.feature.login
 
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface AuthApi {
@@ -8,4 +9,7 @@ interface AuthApi {
     suspend fun login(
         @Body request: LoginRequest
     ): LoginResponse
+
+    @GET("profile")
+    suspend fun getProfile(): Unit
 }
