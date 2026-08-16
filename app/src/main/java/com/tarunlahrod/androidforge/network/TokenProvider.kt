@@ -2,6 +2,7 @@ package com.tarunlahrod.androidforge.network
 
 interface TokenProvider {
     fun getAccessToken(): String?
-    fun saveAccessToken(token: String)
-    fun clearAccessToken()
+    suspend fun initialize()
+    suspend fun saveAccessToken(token: String)
+    suspend fun clearAccessToken()
 }

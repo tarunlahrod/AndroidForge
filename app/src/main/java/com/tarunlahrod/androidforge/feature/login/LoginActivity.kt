@@ -10,15 +10,19 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.tarunlahrod.androidforge.di.ServiceLocator
+import com.tarunlahrod.androidforge.AndroidForgeApplication
 import com.tarunlahrod.androidforge.databinding.ActivityLoginBinding
 import com.tarunlahrod.androidforge.feature.counter.CounterActivity
 import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
-    lateinit var binding: ActivityLoginBinding
+    private lateinit var binding: ActivityLoginBinding
+
+    private val app: AndroidForgeApplication
+        get() = application as AndroidForgeApplication
+
     val viewModel: LoginViewModel by viewModels {
-        LoginViewModelFactory(repository = ServiceLocator.container.authRepository)
+        LoginViewModelFactory(repository = app.appContainer.authRepository)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

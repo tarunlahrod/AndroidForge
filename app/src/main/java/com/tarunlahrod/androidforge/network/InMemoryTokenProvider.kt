@@ -8,11 +8,15 @@ class InMemoryTokenProvider : TokenProvider {
         return accessToken
     }
 
-    override fun saveAccessToken(token: String) {
+    override suspend fun initialize() {
+        // Nothing to restore for an in-memory implementation
+    }
+
+    override suspend fun saveAccessToken(token: String) {
         accessToken = token
     }
 
-    override fun clearAccessToken() {
+    override suspend fun clearAccessToken() {
         accessToken = null
     }
 }
