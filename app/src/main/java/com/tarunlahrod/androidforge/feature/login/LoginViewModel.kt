@@ -2,6 +2,7 @@ package com.tarunlahrod.androidforge.feature.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tarunlahrod.androidforge.auth.AuthSession
 import com.tarunlahrod.androidforge.network.ApiResult
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +14,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
-    private val repository: AuthRepository
+    private val repository: AuthRepository,
+    private val authSession: AuthSession
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
@@ -56,7 +58,7 @@ class LoginViewModel(
 
             when (result) {
                 is ApiResult.Success -> {
-                    _uiEvent.emit(LoginUiEvent.NavigateToHome)
+                    authSession.markLoggedIn()
                 }
                 is ApiResult.Failure -> {
                     _uiEvent.emit(

@@ -11,6 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.tarunlahrod.androidforge.AndroidForgeApplication
+import com.tarunlahrod.androidforge.auth.SessionState
 import com.tarunlahrod.androidforge.databinding.ActivityLoginBinding
 import com.tarunlahrod.androidforge.feature.counter.CounterActivity
 import kotlinx.coroutines.launch
@@ -22,7 +23,10 @@ class LoginActivity : AppCompatActivity() {
         get() = application as AndroidForgeApplication
 
     val viewModel: LoginViewModel by viewModels {
-        LoginViewModelFactory(repository = app.appContainer.authRepository)
+        LoginViewModelFactory(
+            repository = app.appContainer.authRepository,
+            authSession = app.appContainer.authSession
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,6 +35,7 @@ class LoginActivity : AppCompatActivity() {
         setupBinding()
         setClickListeners()
         observeUiState()
+        observeSessionState()
         observeUiEvents()
     }
 
@@ -65,17 +70,36 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    private fun observeSessionState() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                app.appContainer.authSession.state.collect { state ->
+                    when (state) {
+                        SessionState.Restoring -> {
+                            // Do nothing
+                        }
+
+                        SessionState.LoggedIn -> {
+                            startActivity(
+                                Intent(this@LoginActivity, CounterActivity::class.java)
+                            )
+                            finish()
+                        }
+
+                        SessionState.LoggedOut -> {
+                            // do nothing
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private fun observeUiEvents() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiEvent.collect { event ->
                     when (event) {
-                        LoginUiEvent.NavigateToHome -> {
-                            startActivity(
-                                Intent(this@LoginActivity, CounterActivity::class.java)
-                            )
-                        }
-
                         is LoginUiEvent.ShowToast -> {
                             Toast.makeText(
                                 this@LoginActivity,

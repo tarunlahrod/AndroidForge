@@ -25,4 +25,8 @@ class AuthSession(private val tokenProvider: TokenProvider) {
             SessionState.LoggedOut
         }
     }
+
+    fun markLoggedIn() {
+        _state.value = SessionState.LoggedIn
+    }
 }
