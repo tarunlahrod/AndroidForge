@@ -44,4 +44,36 @@ class AuthSessionTest {
         // Assert
         assertEquals(SessionState.LoggedOut, authSession.state.value)
     }
+
+    @Test
+    fun `logout clears token and results in logged out state`() = runTest {
+        // Arrange
+        val tokenProvider = InMemoryTokenProvider()
+        tokenProvider.saveAccessToken("abc123")
+
+        val authSession = AuthSession(tokenProvider)
+        authSession.restore()
+        assertEquals(SessionState.LoggedIn, authSession.state.value)
+
+        // Act
+        authSession.logout()
+
+        // Assert
+        assertEquals(SessionState.LoggedOut, authSession.state.value)
+        assertEquals(null, tokenProvider.getAccessToken())
+    }
+
+    @Test
+    fun `logout when already logged out remains logged out`() = runTest {
+        // Arrange
+        val tokenProvider = InMemoryTokenProvider()
+        val authSession = AuthSession(tokenProvider)
+
+        // Act
+        authSession.logout()
+
+        // Assert
+        assertEquals(SessionState.LoggedOut, authSession.state.value)
+        assertEquals(null, tokenProvider.getAccessToken())
+    }
 }

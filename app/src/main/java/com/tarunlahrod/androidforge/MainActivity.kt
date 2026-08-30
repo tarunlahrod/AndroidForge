@@ -1,15 +1,14 @@
 package com.tarunlahrod.androidforge
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.navOptions
 import com.tarunlahrod.androidforge.auth.SessionState
 import com.tarunlahrod.androidforge.databinding.ActivityMainBinding
-import com.tarunlahrod.androidforge.feature.counter.CounterActivity
-import com.tarunlahrod.androidforge.feature.login.LoginActivity
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -36,24 +35,47 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 app.appContainer.authSession.state.collect { state ->
-                    when (state) {
-                        SessionState.Restoring -> Unit
+                    navigateFor(state)
+                }
+            }
+        }
+    }
 
-                        SessionState.LoggedIn -> {
-                            startActivity(
-                                Intent(this@MainActivity, CounterActivity::class.java)
-                            )
-                            finish()
-                        }
+    private fun navigateFor(state: SessionState) {
+        val navHost = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
 
-                        SessionState.LoggedOut -> {
-                            startActivity(
-                                Intent(this@MainActivity, LoginActivity::class.java)
-                            )
-                            finish()
+        val navController = navHost.navController
+
+        when (state) {
+            SessionState.Restoring -> {
+                // RestoringFragment is already the start destination
+            }
+
+            SessionState.LoggedOut -> {
+                navController.navigate(
+                    R.id.auth_graph,
+                    null,
+                    navOptions {
+                        launchSingleTop = true
+                        popUpTo(R.id.nav_graph) {
+                            inclusive = false
                         }
                     }
-                }
+                )
+            }
+
+            SessionState.LoggedIn -> {
+                navController.navigate(
+                    R.id.main_graph,
+                    null,
+                    navOptions {
+                        launchSingleTop = true
+                        popUpTo(R.id.nav_graph) {
+                            inclusive = false
+                        }
+                    }
+                )
             }
         }
     }

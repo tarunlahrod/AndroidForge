@@ -1,50 +1,58 @@
 package com.tarunlahrod.androidforge.feature.login
 
-import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.tarunlahrod.androidforge.AndroidForgeApplication
 import com.tarunlahrod.androidforge.auth.SessionState
-import com.tarunlahrod.androidforge.databinding.ActivityLoginBinding
-import com.tarunlahrod.androidforge.feature.counter.CounterActivity
+import com.tarunlahrod.androidforge.databinding.FragmentLoginBinding
 import kotlinx.coroutines.launch
 
-class LoginActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityLoginBinding
+class LoginFragment : Fragment() {
+    private var _binding: FragmentLoginBinding? = null
+    private val binding get() = _binding!!
 
     private val app: AndroidForgeApplication
-        get() = application as AndroidForgeApplication
+        get() = requireActivity().application as AndroidForgeApplication
 
-    val viewModel: LoginViewModel by viewModels {
+    private val viewModel: LoginViewModel by viewModels {
         LoginViewModelFactory(
             repository = app.appContainer.authRepository,
             authSession = app.appContainer.authSession
         )
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentLoginBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        setupBinding()
-        setClickListeners()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupClickListeners()
         observeUiState()
-        observeSessionState()
         observeUiEvents()
     }
 
-    private fun setupBinding() {
-        binding = ActivityLoginBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
-    private fun setClickListeners() {
+    private fun setupClickListeners() {
         binding.apply {
             etEmail.doAfterTextChanged {
                 viewModel.onEmailChanged(it.toString())
@@ -80,10 +88,7 @@ class LoginActivity : AppCompatActivity() {
                         }
 
                         SessionState.LoggedIn -> {
-                            startActivity(
-                                Intent(this@LoginActivity, CounterActivity::class.java)
-                            )
-                            finish()
+
                         }
 
                         SessionState.LoggedOut -> {
@@ -102,7 +107,7 @@ class LoginActivity : AppCompatActivity() {
                     when (event) {
                         is LoginUiEvent.ShowToast -> {
                             Toast.makeText(
-                                this@LoginActivity,
+                                requireContext(),
                                 event.message,
                                 Toast.LENGTH_SHORT
                             ).show()

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/restoringFragment">
+
+    <fragment
+        android:id="@+id/restoringFragment"
+        android:name="com.tarunlahrod.androidforge.feature.startup.RestoringFragment"
+        android:label="Restoring" />
+
+    <navigation
+        android:id="@+id/auth_graph"
+        app:startDestination="@id/loginFragment">
+
+        <fragment
+            android:id="@+id/loginFragment"
+            android:name="com.tarunlahrod.androidforge.feature.login.LoginFragment"
+            android:label="Login" />
+    </navigation>
+
+    <navigation
+        android:id="@+id/main_graph"
+        app:startDestination="@id/counterFragment">
+
+        <fragment
+            android:id="@+id/counterFragment"
+            android:name="com.tarunlahrod.androidforge.feature.counter.CounterFragment"
+            android:label="Counter" />
+    </navigation>
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.tarunlahrod.androidforge.feature.login.LoginFragment"
+        android:label="Login" />
+
+    <fragment
+        android:id="@+id/counterFragment"
+        android:name="com.tarunlahrod.androidforge.feature.counter.CounterFragment"
+        android:label="Counter" />
+</navigation>

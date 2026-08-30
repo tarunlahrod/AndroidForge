@@ -21,13 +21,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".feature.counter.CounterActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".feature.login.LoginActivity"
-            android:exported="false" />
     </application>
 
 </manifest>
