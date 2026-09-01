@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="TextAppearance.AndroidForge.Body"
+        parent="TextAppearance.Material3.BodyLarge">
+        <item
+            name="android:textColor">@color/color_text_primary</item>
+    </style>
+</resources>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl_app_icon_text_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <com.tarunlahrod.androidforge.ui.atom.AppIconView
+        android:id="@+id/iv_start_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="44dp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        tools:src="@drawable/ic_add"
+        tools:visibility="gone" />
+
+    <com.tarunlahrod.androidforge.ui.atom.AppTextView
+        android:id="@+id/tv_text"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+    <com.tarunlahrod.androidforge.ui.atom.AppIconView
+        android:id="@+id/iv_end_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="44dp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        tools:src="@drawable/ic_chevron_right"
+        tools:visibility="gone" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

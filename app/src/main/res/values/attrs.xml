@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="AppButton">
+        <attr name="appButtonStyle" format="enum">
+            <enum name="primary" value="0" />
+            <enum name="secondary" value="1" />
+            <enum name="destructive" value="2" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="AppIconView">
+        <attr name="iconSize" format="dimension" />
+        <attr name="iconTint" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="AppIconTextView">
+
+        <!-- Text -->
+        <attr name="android:text" />
+        <attr name="android:textAppearance" />
+        <attr name="android:textColor" />
+        <attr name="android:textSize" />
+        <attr name="android:gravity" />
+        <attr name="android:textAlignment" />
+        <attr name="android:fontFamily" />
+
+        <!-- Icons -->
+        <attr name="startIcon" format="reference" />
+        <attr name="endIcon" format="reference" />
+
+        <attr name="startIconTint" format="color" />
+        <attr name="endIconTint" format="color" />
+
+        <attr name="startIconSize" format="dimension" />
+        <attr name="endIconSize" format="dimension" />
+
+        <!-- Spacing between icon and text -->
+        <attr name="iconTextSpacing" format="dimension" />
+
+    </declare-styleable>
+
+    <declare-styleable name="AppCircularImageView">
+        <attr name="borderWidth" format="dimension" />
+        <attr name="borderColor" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="AppRoundedImageView">
+        <attr name="cornerRadius" format="dimension" />
+        <attr name="borderWidth" />
+        <attr name="borderColor" />
+    </declare-styleable>
+
+</resources>
