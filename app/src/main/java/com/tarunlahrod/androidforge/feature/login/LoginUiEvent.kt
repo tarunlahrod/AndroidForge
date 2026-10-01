@@ -5,4 +5,6 @@ sealed interface LoginUiEvent {
     data class ShowToast(
         val message: String
     ) : LoginUiEvent
+
+    object OpenHabit : LoginUiEvent
 }

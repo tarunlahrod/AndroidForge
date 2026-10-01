@@ -17,6 +17,11 @@
             android:id="@+id/loginFragment"
             android:name="com.tarunlahrod.androidforge.feature.login.LoginFragment"
             android:label="Login" />
+
+        <fragment
+            android:id="@+id/habitFragment"
+            android:name="com.tarunlahrod.androidforge.feature.habittracker.HabitFragment"
+            android:label="Habit" />
     </navigation>
 
     <navigation
@@ -29,13 +34,4 @@
             android:label="Counter" />
     </navigation>
 
-    <fragment
-        android:id="@+id/loginFragment"
-        android:name="com.tarunlahrod.androidforge.feature.login.LoginFragment"
-        android:label="Login" />
-
-    <fragment
-        android:id="@+id/counterFragment"
-        android:name="com.tarunlahrod.androidforge.feature.counter.CounterFragment"
-        android:label="Counter" />
 </navigation>

@@ -12,7 +12,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.tarunlahrod.androidforge.AndroidForgeApplication
+import com.tarunlahrod.androidforge.R
 import com.tarunlahrod.androidforge.auth.SessionState
 import com.tarunlahrod.androidforge.databinding.FragmentLoginBinding
 import kotlinx.coroutines.launch
@@ -65,11 +67,15 @@ class LoginFragment : Fragment() {
             btnLogin.setOnClickListener {
                 viewModel.login()
             }
+
+            btnDestructive.setOnClickListener {
+                viewModel.openHabit()
+            }
         }
     }
 
     private fun observeUiState() {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { uiState ->
                     render(uiState)
@@ -79,7 +85,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun observeSessionState() {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 app.appContainer.authSession.state.collect { state ->
                     when (state) {
@@ -101,7 +107,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun observeUiEvents() {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiEvent.collect { event ->
                     when (event) {
@@ -111,6 +117,12 @@ class LoginFragment : Fragment() {
                                 event.message,
                                 Toast.LENGTH_SHORT
                             ).show()
+                        }
+
+                        LoginUiEvent.OpenHabit -> {
+                            findNavController().navigate(
+                                R.id.habitFragment
+                            )
                         }
                     }
                 }

@@ -69,6 +69,14 @@ class LoginViewModel(
         }
     }
 
+    fun openHabit() {
+        viewModelScope.launch {
+            _uiEvent.emit(
+                LoginUiEvent.OpenHabit
+            )
+        }
+    }
+
     private fun calculateLoginEnabled(
         email: String,
         password: String

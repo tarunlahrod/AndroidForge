@@ -63,4 +63,11 @@ dependencies {
     /** jetpack navigation */
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+
+    /** room */
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+
+    /** work manager */
+    implementation(libs.work.runtime.ktx)
 }
